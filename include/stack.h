@@ -1,9 +1,89 @@
-// объявление и реализация шаблонного стека
-// стек поддерживает операции: 
-// - вставка элемента, 
-// - извлечение элемента, 
-// - просмотр верхнего элемента (без удаления)
-// - проверка на пустоту, 
-// - получение количества элементов в стеке
-// - очистка стека
-// при вставке в полный стек должна перевыделяться память
+// РѕР±СЉСЏРІР»РµРЅРёРµ Рё СЂРµР°Р»РёР·Р°С†РёСЏ С€Р°Р±Р»РѕРЅРЅРѕРіРѕ СЃС‚РµРєР°
+// СЃС‚РµРє РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РѕРїРµСЂР°С†РёРё: 
+// - РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р°, 
+// - РёР·РІР»РµС‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°, 
+// - РїСЂРѕСЃРјРѕС‚СЂ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° (Р±РµР· СѓРґР°Р»РµРЅРёСЏ)
+// - РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ, 
+// - РїРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РІ СЃС‚РµРєРµ
+// - РѕС‡РёСЃС‚РєР° СЃС‚РµРєР°
+// РїСЂРё РІСЃС‚Р°РІРєРµ РІ РїРѕР»РЅС‹Р№ СЃС‚РµРє РґРѕР»Р¶РЅР° РїРµСЂРµРІС‹РґРµР»СЏС‚СЊСЃСЏ РїР°РјСЏС‚СЊ
+#ifndef __TSTACK_H__
+#define __TSTACK_H__
+const int MAX_STACK_SIZE = 1000000;
+
+template <class ValType>
+class TStack {
+private:
+	int stackSize;
+	int top;
+	ValType *data;
+public:
+	// constructors
+	TStack() { stackSize = 100; data = new ValType[stackSize]; top = -1; }
+	TStack(int _size) 
+	{ 
+		if (!_size) throw "Can't have null size";
+		if (_size > MAX_STACK_SIZE) throw "Size more than MAX_VECTOR_SIZE";
+		stackSize = _size; data = new ValType[stackSize]; top = -1;
+	}
+	// methods
+	ValType getTop();
+	ValType getSize();
+	ValType pop();
+	void push(const ValType &x);
+	void clear();
+	bool isEmpty();
+	bool isFull();
+};
+
+template <class ValType>
+void TStack<ValType>::clear(){
+	top = -1;
+	delete[] data;
+	data = new ValType[stackSize];
+}
+
+template<class ValType> 
+ValType TStack<ValType>::getSize(){
+	return top + 1;
+}
+
+template <class ValType> 
+ValType TStack<ValType>::getTop(){
+	if (isEmpty())
+		throw "Stack is empty";
+	return data[top];
+}
+
+template <class ValType>
+bool TStack<ValType>::isEmpty(){
+	return top == -1;
+}
+
+template <class ValType>
+void TStack <ValType>::push(const ValType &x){
+	if (isFull()) {
+		stackSize = (stackSize+1) * 2;
+		ValType* tmp = new ValType[stackSize];
+		for (int i = 0; i < top + 1; i++) {
+			tmp[i] = data[i];
+		}
+		delete[] data;
+		data = tmp;
+	}
+	top++;
+	data[top] = x;
+}
+
+template <class ValType>
+ValType TStack <ValType>::pop(){
+	if (!isEmpty())
+		return data[top--];
+	else throw "Stack is empty";
+}
+
+template <class ValType>
+bool TStack<ValType>::isFull(){
+	return top >= stackSize - 1;
+}
+#endif
